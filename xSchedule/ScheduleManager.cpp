@@ -88,14 +88,16 @@ ScheduleManager::ScheduleManager(xScheduleFrame* frame, const std::string& showD
     _timerAdjustment = 0;
     _lastXyzzyCommand = wxDateTime::Now();
     _outputManager = new OutputManager();
-
     _transBrightnessTo = 0;
     _transVolumeTo = 0;
-    _transBrightStart = nullptr;
-    _transBrightFinish = nullptr;
-    _transVolumeStart = nullptr;
-    _transVolumeFinish = nullptr;
-
+    _transBrightStartHour = 0;
+    _transBrightStartMinute = 0;
+    _transBrightFinishHour = 0;
+    _transBrightFinishMinute = 0;
+    _transVolumeStartHour = 0;
+    _transVolumeStartMinute = 0;
+    _transVolumeFinishHour = 0;
+    _transVolumeFinishMinute = 0;
     _mode = (int)SYNCMODE::STANDALONE;
     _remoteMode = REMOTEMODE::DISABLED;
     wxConfigBase* config = wxConfigBase::Get();
