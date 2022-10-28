@@ -2899,14 +2899,10 @@ bool ScheduleManager::Action(const wxString& command, const wxString& parameters
                         {
                             // Clear the brightness and transitioning (we don't care what start/finish time parameters are as we aren't transitioning anymore)
                             _transBrightnessTo = 0;
-                            _transBrightStart = "";
-                            _transBrightFinish = "";
                         }
                         else
                         {
-                            int s = wxAtol(split[0]);
-                            int f = wxAtol(split[1]);
-                            if (s < 0 || s > 2400 || f < 0 || f > 2400 || split[0].length() != 4 || split[1].length() != 4)
+                            if (split[0].length() != 4 || split[1].length() != 4)
                             {
                                 // Invalid start/finish time specified, this is ONLY valid if brightness percentage is zero which has already been handled
                                 // NB: we don't clear the existing transition in this instance (if there is one set).
@@ -2915,18 +2911,23 @@ bool ScheduleManager::Action(const wxString& command, const wxString& parameters
                             }
                             else
                             {
-                                // We should check the last 2 digits to make sure they aren't over 59...
-                                if (wxAtol(split[0].substr(2, 2)) > 59 || wxAtol(split[1].substr(2, 2)) > 59)
+                                int sh = wxAtol(split[0].substr(0, 2));
+                                int sm = wxAtol(split[0].substr(2, 2));
+                                int fh = wxAtol(split[1].substr(0, 2));
+                                int fm = wxAtol(split[1].substr(2, 2));
+                                if (sh < 0 || sh > 23 || sm < 0 || sm > 59 || fh < 0 || fh > 23 || fm < 0 || fm > 59)
                                 {
                                     result = false;
                                     msg = "Start or finish time is not valid";
                                 }
                                 else
                                 {
-                                    // At this point, hours are guaranteed to be 0 to 24 and minutes are guaranteed to be 0 to 59
+                                    // At this point, hours are guaranteed to be 0 to 23 and minutes are guaranteed to be 0 to 59
                                     _transBrightnessTo = bto;
-                                    _transBrightStart = split[0];
-                                    _transBrightFinish = split[1];
+                                    _transBrightStartHour = sh;
+                                    _transBrightStartMinute = sm;
+                                    _transBrightFinishHour = fh;
+                                    _transBrightFinishMinute = fm;
                                 }
                             }
                         }
@@ -2951,34 +2952,35 @@ bool ScheduleManager::Action(const wxString& command, const wxString& parameters
                         {
                             // Clear the volume and transitioning (we don't care what start/finish time parameters are as we aren't transitioning anymore)
                             _transVolumeTo = 0;
-                            _transVolumeStart = "";
-                            _transVolumeFinish = "";
                         }
                         else
                         {
-                            int s = wxAtol(split[0]);
-                            int f = wxAtol(split[1]);
-                            if (s < 0 || s > 2400 || f < 0 || f > 2400 || split[0].length() != 4 || split[1].length() != 4)
+                            if (split[0].length() != 4 || split[1].length() != 4)
                             {
-                                // Invalid start/finish time specified, this is ONLY valid if brightness percentage is zero which has already been handled
+                                // Invalid start/finish time specified, this is ONLY valid if volume percentage is zero which has already been handled
                                 // NB: we don't clear the existing transition in this instance (if there is one set).
                                 result = false;
                                 msg = "Start or finish time is not valid";
                             }
                             else
                             {
-                                // We should check the last 2 digits to make sure they aren't over 59...
-                                if (wxAtol(split[0].substr(2, 2)) > 59 || wxAtol(split[1].substr(2, 2)) > 59)
+                                int sh = wxAtol(split[0].substr(0, 2));
+                                int sm = wxAtol(split[0].substr(2, 2));
+                                int fh = wxAtol(split[1].substr(0, 2));
+                                int fm = wxAtol(split[1].substr(2, 2));
+                                if (sh < 0 || sh > 23 || sm < 0 || sm > 59 || fh < 0 || fh > 23 || fm < 0 || fm > 59)
                                 {
                                     result = false;
                                     msg = "Start or finish time is not valid";
                                 }
                                 else
                                 {
-                                    //At this point, hours are guaranteed to be 0 to 24 and minutes are guaranteed to be 0 to 59
+                                    // At this point, hours are guaranteed to be 0 to 23 and minutes are guaranteed to be 0 to 59
                                     _transVolumeTo = vto;
-                                    _transVolumeStart = split[0];
-                                    _transVolumeFinish = split[1];
+                                    _transVolumeStartHour = sh;
+                                    _transVolumeStartMinute = sm;
+                                    _transVolumeFinishHour = fh;
+                                    _transVolumeFinishMinute = fm;
                                 }
                             }
                         }

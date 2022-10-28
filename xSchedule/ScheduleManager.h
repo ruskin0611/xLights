@@ -93,12 +93,18 @@ class ScheduleManager
     wxThreadIdType _mainThread;
     int _brightness = 0;
     int _lastBrightness = 0;
+    
     int _transBrightnessTo = 0;
     int _transVolumeTo = 0;
-    std::string _transBrightStart;
-    std::string _transBrightFinish;
-    std::string _transVolumeStart;
-    std::string _transVolumeFinish;
+    int _transBrightStartHour;
+    int _transBrightStartMinute;
+    int _transBrightFinishHour;
+    int _transBrightFinishMinute;
+    int _transVolumeStartHour;
+    int _transVolumeStartMinute;
+    int _transVolumeFinishHour;
+    int _transVolumeFinishMinute;
+
     uint8_t _brightnessArray[256];
     wxMidiOutDevice* _midiMaster = nullptr;
     wxDatagramSocket* _fppSyncMaster = nullptr;
