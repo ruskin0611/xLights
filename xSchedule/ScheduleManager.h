@@ -93,6 +93,12 @@ class ScheduleManager
     wxThreadIdType _mainThread;
     int _brightness = 0;
     int _lastBrightness = 0;
+    int _transBrightnessTo = 0;
+    int _transVolumeTo = 0;
+    std::string _transBrightStart;
+    std::string _transBrightFinish;
+    std::string _transVolumeStart;
+    std::string _transVolumeFinish;
     uint8_t _brightnessArray[256];
     wxMidiOutDevice* _midiMaster = nullptr;
     wxDatagramSocket* _fppSyncMaster = nullptr;
@@ -182,6 +188,8 @@ class ScheduleManager
         int GetBrightness() const { return _brightness; }
         void AdjustBrightness(int by) { _brightness += by; if (_brightness < 0) _brightness = 0; else if (_brightness > 100) _brightness = 100; }
         void SetBrightness(int brightness) { if (brightness < 0) _brightness = 0; else if (brightness > 100) _brightness = 100; else _brightness = brightness; }
+        bool TransitionBrightness() { return (_transBrightnessTo > 0); }
+        bool TransitionVolume() { return (_transVolumeTo > 0); }
         void ApplyBrightness();
         int Frame(bool outputframe, xScheduleFrame* frame); // called when a frame needs to be displayed ... returns desired frame rate
         int CheckSchedule();

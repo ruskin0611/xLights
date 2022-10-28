@@ -330,6 +330,9 @@ CommandManager::CommandManager()
     _commands.push_back(new Command("Set step position ms", 1, i, false, false, false, true, false, false, true, true, false));
 
     _commands.push_back(new Command("Add to the current schedule n minutes", 1, i, false, false, false, true, true, false, true, true, false));
+    
+    _commands.push_back(new Command("Transition brightness", 2, i, false, false, false, false, false, false, true, false, false));
+    _commands.push_back(new Command("Transition volume", 2, i, false, false, false, false, false, false, true, false, false));
 
     _commands.push_back(new Command("Toggle mute", 0, {}, false, false, false, false, false, true, true, true, false));
     _commands.push_back(new Command("Set volume to", 1, i, false, false, false, false, false, true, true, true, false));

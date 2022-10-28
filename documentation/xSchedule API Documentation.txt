@@ -246,6 +246,22 @@ http://<host:port>/xScheduleCommand?Command=<command>&Parameters=<parameters>
 		Toggle mute
 			This API mutes/unmutes the audio ... remembering the volume that it was previously set to.
 		
+		Transition brightness <start time hhmm>,<finish time hhmm>,<to n%>
+			This API lets you transition brightness from your current brightness percentage to a new percentage, starting at a given time (hhmm, eg: 1900) and finishing at a given time (hhmm, eg: 1930)
+			eg: to transition brightness from your current level (80%??) to 20% starting at 9pm and finishing at 9:30pm, you would use;
+				http://127.0.0.1/xScheduleCommand?Command=Transition brightness&Parameters=2100,2130,20
+			NOTE: if you restart xSchedule, the transition information will be lost, so you will need to call this API again
+			Also note, if your new percentage is higher than the current percentage, it will transition brightness up (not down)
+			Pass through a percentage of zero (start and finish times will be ignored) to cancel the transition (the current level will apply)
+		
+		Transition volume <start time hhmm>,<finish time hhmm>,<to n%>
+			This API lets you transition volume from your current volume percentage to a new percentage, starting at a given time (hhmm, eg: 1900) and finishing at a given time (hhmm, eg: 1930)
+			eg: to transition volume from your current level (100%??) to 70% starting at 9pm and finishing at 9:30pm, you would use;
+				http://127.0.0.1/xScheduleCommand?Command=Transition volume&Parameters=2100,2130,70
+			NOTE: if you restart xSchedule, the transition information will be lost, so you will need to call this API again
+			Also note, if your new volume is higher than the current percentage, it will transition volume up (not down)
+			Pass through a percentage of zero (start and finish times will be ignored) to cancel the transition (the current level will apply)
+
 		Enqueue playlist step <playlist name>,<step name>
 			This API adds the named step in the named playlist to the list of queued songs. Steps will not be accepted if they are already the last song in the queue.
 			

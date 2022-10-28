@@ -89,6 +89,13 @@ ScheduleManager::ScheduleManager(xScheduleFrame* frame, const std::string& showD
     _lastXyzzyCommand = wxDateTime::Now();
     _outputManager = new OutputManager();
 
+    _transBrightnessTo = 0;
+    _transVolumeTo = 0;
+    _transBrightStart = nullptr;
+    _transBrightFinish = nullptr;
+    _transVolumeStart = nullptr;
+    _transVolumeFinish = nullptr;
+
     _mode = (int)SYNCMODE::STANDALONE;
     _remoteMode = REMOTEMODE::DISABLED;
     wxConfigBase* config = wxConfigBase::Get();
@@ -2872,6 +2879,110 @@ bool ScheduleManager::Action(const wxString& command, const wxString& parameters
                 {
                     int b = wxAtoi(parameters);
                     SetBrightness(b);
+                }
+                else if (command == "Transition brightness") 
+                {
+                    // Transition brightness from whatever it "was" to the new level over the start/finish times.
+                    wxString parameter = parameters;
+                    wxArrayString split = wxSplit(parameter, ',');
+
+                    if (split.size() != 3) 
+                    {
+                        // Incorrect number of parameters (we don't clear any existing transition)
+                        result = false;
+                        msg = "Transition brightness requires 3 parameters (start, finish and brightness percentage)";
+                    }
+                    else
+                    {
+                        int bto = wxAtol(split[2]);
+                        if (bto == 0) 
+                        {
+                            // Clear the brightness and transitioning (we don't care what start/finish time parameters are as we aren't transitioning anymore)
+                            _transBrightnessTo = 0;
+                            _transBrightStart = "";
+                            _transBrightFinish = "";
+                        }
+                        else
+                        {
+                            int s = wxAtol(split[0]);
+                            int f = wxAtol(split[1]);
+                            if (s < 0 || s > 2400 || f < 0 || f > 2400 || split[0].length() != 4 || split[1].length() != 4)
+                            {
+                                // Invalid start/finish time specified, this is ONLY valid if brightness percentage is zero which has already been handled
+                                // NB: we don't clear the existing transition in this instance (if there is one set).
+                                result = false;
+                                msg = "Start or finish time is not valid";
+                            }
+                            else
+                            {
+                                // We should check the last 2 digits to make sure they aren't over 59...
+                                if (wxAtol(split[0].substr(2, 2)) > 59 || wxAtol(split[1].substr(2, 2)) > 59)
+                                {
+                                    result = false;
+                                    msg = "Start or finish time is not valid";
+                                }
+                                else
+                                {
+                                    // At this point, hours are guaranteed to be 0 to 24 and minutes are guaranteed to be 0 to 59
+                                    _transBrightnessTo = bto;
+                                    _transBrightStart = split[0];
+                                    _transBrightFinish = split[1];
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (command == "Transition volume") 
+                {
+                    // Transition volume from whatever it "was" to the new level over the start/finish times.
+                    wxString parameter = parameters;
+                    wxArrayString split = wxSplit(parameter, ',');
+
+                    if (split.size() != 3)
+                    {
+                        // Incorrect number of parameters (we don't clear any existing transition)
+                        result = false;
+                        msg = "Transition volume requires 3 parameters (start, finish and volume percentage)";
+                    }
+                    else
+                    {
+                        int vto = wxAtol(split[2]);
+                        if (vto == 0)
+                        {
+                            // Clear the volume and transitioning (we don't care what start/finish time parameters are as we aren't transitioning anymore)
+                            _transVolumeTo = 0;
+                            _transVolumeStart = "";
+                            _transVolumeFinish = "";
+                        }
+                        else
+                        {
+                            int s = wxAtol(split[0]);
+                            int f = wxAtol(split[1]);
+                            if (s < 0 || s > 2400 || f < 0 || f > 2400 || split[0].length() != 4 || split[1].length() != 4)
+                            {
+                                // Invalid start/finish time specified, this is ONLY valid if brightness percentage is zero which has already been handled
+                                // NB: we don't clear the existing transition in this instance (if there is one set).
+                                result = false;
+                                msg = "Start or finish time is not valid";
+                            }
+                            else
+                            {
+                                // We should check the last 2 digits to make sure they aren't over 59...
+                                if (wxAtol(split[0].substr(2, 2)) > 59 || wxAtol(split[1].substr(2, 2)) > 59)
+                                {
+                                    result = false;
+                                    msg = "Start or finish time is not valid";
+                                }
+                                else
+                                {
+                                    //At this point, hours are guaranteed to be 0 to 24 and minutes are guaranteed to be 0 to 59
+                                    _transVolumeTo = vto;
+                                    _transVolumeStart = split[0];
+                                    _transVolumeFinish = split[1];
+                                }
+                            }
+                        }
+                    }
                 }
                 else if (command == "Toggle current playlist random")
                 {
