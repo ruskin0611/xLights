@@ -191,7 +191,31 @@ class ScheduleManager
         Command* GetCommand(std::string command) const { return _commandManager.GetCommand(command); }
         CommandManager* GetCommandManager() { return &_commandManager; };
         bool IsRunning() const { return GetRunningPlayList() != nullptr; }
-        int GetBrightness() const { return _brightness; }
+        
+        
+        // int GetBrightness() const { return _brightness; }
+        int GetBrightness() const
+        {
+            if (_transBrightnessTo > 0)
+            {
+                auto now = std::chrono::system_clock::now();
+                //if now is before transition from then return brightness
+                //if now is after transition to then return brightness to
+                
+                //YIKES !!!! We need to figure out what happens if it's just after midnight...
+                //EG: transition brightness from 100% at 11pm to 20% at 1am.
+                //When we hit 12:01am it's now the next day and hour is 00 which is less than 11 so we shouldn't transition
+                //BUT.... it's actually after 11pm of the night before !! so at midnight we should be at around 60% (not 100%)
+
+
+
+                int start = _brightness;
+                int finish = _transBrightnessTo;
+            }
+            //Not transitioning, so just return the set brightness....
+            return _brightness;
+        }
+        
         void AdjustBrightness(int by) { _brightness += by; if (_brightness < 0) _brightness = 0; else if (_brightness > 100) _brightness = 100; }
         void SetBrightness(int brightness) { if (brightness < 0) _brightness = 0; else if (brightness > 100) _brightness = 100; else _brightness = brightness; }
         bool TransitionBrightness() { return (_transBrightnessTo > 0); }
